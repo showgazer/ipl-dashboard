@@ -1,12 +1,14 @@
 package io.showgazer.ipldashboard.controller;
 
+import io.showgazer.ipldashboard.model.Match;
 import io.showgazer.ipldashboard.model.Team;
 import io.showgazer.ipldashboard.repository.MatchRepository;
 import io.showgazer.ipldashboard.repository.TeamRepository;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.tomcat.jni.Local;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 
 @RestController
@@ -25,6 +27,18 @@ public class TeamController {
 
         return team;
 
+    }
+
+    @GetMapping("/team/{teamName}/matches")
+    public List<Match> getMatchesForTeam(@PathVariable String teamName, @RequestParam int year){
+        LocalDate startDate = LocalDate.of(year, 1, 1);
+        LocalDate endDate = LocalDate.of(year+1, 1, 1);
+
+        return this.matchRepository.getMatchesByTeamBetweenDates(
+                teamName,
+                startDate,
+                endDate
+        );
     }
 
     public TeamController(TeamRepository teamRepository, MatchRepository matchRepository) {
